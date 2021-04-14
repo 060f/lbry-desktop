@@ -2,7 +2,7 @@
 import React from 'react';
 import { parseURI } from 'lbry-redux';
 import classnames from 'classnames';
-import Gerbil from './gerbil.png';
+import Spaceman from './spaceman.png';
 import FreezeframeWrapper from 'component/fileThumbnail/FreezeframeWrapper';
 import ChannelStakedIndicator from 'component/channelStakedIndicator';
 import useLazyLoading from 'effects/use-lazy-loading';
@@ -84,7 +84,7 @@ function ChannelThumbnail(props: Props) {
           ref={thumbnailRef}
           alt={__('Channel profile picture')}
           className="channel-thumbnail__default"
-          data-src={!thumbError && thumbnailPreview ? thumbnailPreview : Gerbil}
+          data-src={!thumbError && thumbnailPreview ? thumbnailPreview : Spaceman}
           onError={() => setThumbError(true)} // if thumb fails (including due to https replace, show gerbil.
         />
       )}
@@ -97,7 +97,7 @@ function ChannelThumbnail(props: Props) {
               ref={thumbnailRef}
               alt={__('Channel profile picture')}
               className="channel-thumbnail__custom"
-              data-src={!thumbError ? thumbnailPreview || thumbnail : Gerbil}
+              data-src={!thumbError ? thumbnailPreview || thumbnail : Spaceman}
               onError={() => setThumbError(true)} // if thumb fails (including due to https replace, show gerbil.
             />
           )}
