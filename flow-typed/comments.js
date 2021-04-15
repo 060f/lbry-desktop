@@ -13,4 +13,13 @@ declare type CommentAbandonParams = {
   hexdata?: string,
 };
 
+declare type CommentCreateParams = {
+  comment: string,
+  claim_id: string,
+  parent_id?: string,
+  signature: string,
+  signing_ts: number,
+  support_tx_id?: string,
+};
+
 declare type ModerationBlockParams = {};

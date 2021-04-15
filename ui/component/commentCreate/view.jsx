@@ -1,4 +1,5 @@
 // @flow
+import type { ElementRef } from 'react';
 import { SIMPLE_SITE } from 'config';
 import * as PAGES from 'constants/pages';
 import * as ICONS from 'constants/icons';
@@ -10,7 +11,8 @@ import SelectChannel from 'component/selectChannel';
 import usePersistedState from 'effects/use-persisted-state';
 import { FF_MAX_CHARS_IN_COMMENT } from 'constants/form-field';
 import { useHistory } from 'react-router';
-import type { ElementRef } from 'react';
+import WalletTipAmountSelector from 'component/walletTipAmountSelector';
+import LbcSymbol from 'component/common/lbc-symbol';
 
 const COMMENT_SLOW_MODE_SECONDS = 5;
 
@@ -49,6 +51,7 @@ export function CommentCreate(props: Props) {
     livestream,
     toast,
     claimIsMine,
+    sendTip,
   } = props;
   const buttonref: ElementRef<any> = React.useRef();
   const {
@@ -57,12 +60,14 @@ export function CommentCreate(props: Props) {
   } = useHistory();
   const { claim_id: claimId } = claim;
   const [isSupportComment, setIsSupportComment] = React.useState();
+  const [isReviewingSupportComment, setIsReviewingSupportComment] = React.useState();
   const [commentValue, setCommentValue] = React.useState('');
   const [lastCommentTime, setLastCommentTime] = React.useState();
-  const [charCount, setCharCount] = useState(commentValue.length);
   const [advancedEditor, setAdvancedEditor] = usePersistedState('comment-editor-mode', false);
   const hasChannels = channels && channels.length;
   const disabled = isPostingComment || !activeChannelClaim || !commentValue.length;
+  const claimChannel = claim.signing_channel ? claim.signing_channel.name : __('Anonymous');
+  const charCount = commentValue.length;
 
   function handleCommentChange(event) {
     let commentValue;
@@ -102,24 +107,39 @@ export function CommentCreate(props: Props) {
         return;
       }
 
-      createComment(commentValue, claimId, parentId).then((res) => {
-        if (res && res.signature) {
-          setCommentValue('');
-          setLastCommentTime(Date.now());
-
-          if (onDoneReplying) {
-            onDoneReplying();
-          }
-        }
-      });
+      handleCreateComment();
     }
+  }
+
+  function handleSupportComment() {
+    const params = {
+      amount: 5,
+      claim_id: claimId,
+    };
+    sendTip(params, (response) => {
+      const { txid } = response;
+      handleCreateComment(txid);
+    });
+  }
+
+  function handleCreateComment(txid) {
+    createComment(commentValue, claimId, parentId, txid).then((res) => {
+      if (res && res.signature) {
+        setCommentValue('');
+        setLastCommentTime(Date.now());
+        setIsReviewingSupportComment(false);
+        setIsSupportComment(false);
+
+        if (onDoneReplying) {
+          onDoneReplying();
+        }
+      }
+    });
   }
 
   function toggleEditorMode() {
     setAdvancedEditor(!advancedEditor);
   }
-
-  useEffect(() => setCharCount(commentValue.length), [commentValue]);
 
   if (!hasChannels) {
     return (
@@ -144,6 +164,30 @@ export function CommentCreate(props: Props) {
           <Button disabled button="primary" label={__('Post --[button to submit something]--')} requiresAuth={IS_WEB} />
         </div>
       </div>
+    );
+  }
+
+  if (isReviewingSupportComment) {
+    return (
+      <>
+        <div className="section section--padded card--inline confirm__wrapper">
+          <div className="section">
+            <div className="confirm__label">{__('To --[the tip recipient]--')}</div>
+            <div className="confirm__value">{claimChannel}</div>
+            <div className="confirm__label">{__('From --[the tip sender]--')}</div>
+            <div className="confirm__value">{activeChannelClaim.name}</div>
+            <div className="confirm__label">{__('Moonchat')}</div>
+            <div className="confirm__value">
+              <LbcSymbol postfix={5} size={22} />
+            </div>
+            <div className="confirm__value">{commentValue}</div>
+          </div>
+        </div>
+        <div className="section__actions">
+          <Button autoFocus button="primary" label={__('Confirm')} onClick={handleSupportComment} />
+          <Button button="link" label={__('Cancel')} onClick={() => setIsReviewingSupportComment(false)} />
+        </div>
+      </>
     );
   }
 
@@ -178,16 +222,21 @@ export function CommentCreate(props: Props) {
         autoFocus={isReply}
         textAreaMaxLength={FF_MAX_CHARS_IN_COMMENT}
       />
-      {isSupportComment && <div></div>}
+      {isSupportComment && (
+        <div>
+          <WalletTipAmountSelector />
+        </div>
+      )}
       <div className="section__actions section__actions--no-margin">
         {isSupportComment ? (
           <>
             <Button
               disabled={disabled}
+              type="button"
               button="primary"
               icon={ICONS.LBC}
               label={__('Send Moonchat')}
-              //   onClick={() => setIsSupportComment(true)}
+              onClick={() => setIsReviewingSupportComment(true)}
             />
             <Button disabled={disabled} button="link" label={__('Cancel')} onClick={() => setIsSupportComment(false)} />
           </>

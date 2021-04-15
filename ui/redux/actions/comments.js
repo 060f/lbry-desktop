@@ -201,9 +201,10 @@ export function doCommentCreate(
   claim_id: string = '',
   parent_id?: string,
   uri: string,
-  livestream?: boolean = false
+  livestream?: boolean = false,
+  txid?: string
 ) {
-  return (dispatch: Dispatch, getState: GetState) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const state = getState();
     const activeChannelClaim = selectActiveChannelClaim(state);
 
@@ -216,6 +217,16 @@ export function doCommentCreate(
       type: ACTIONS.COMMENT_CREATE_STARTED,
     });
 
+    let signatureData;
+    if (activeChannelClaim) {
+      try {
+        signatureData = await Lbry.channel_sign({
+          channel_id: activeChannelClaim.claim_id,
+          hexdata: toHex(comment),
+        });
+      } catch (e) {}
+    }
+
     if (parent_id) {
       const notification = makeSelectNotificationForCommentId(parent_id)(state);
       if (notification && !notification.is_seen) {
@@ -223,11 +234,14 @@ export function doCommentCreate(
       }
     }
 
-    return Lbry.comment_create({
+    return Comments.comment_create({
       comment: comment,
       claim_id: claim_id,
       channel_id: activeChannelClaim.claim_id,
       parent_id: parent_id,
+      signature: signatureData.signature,
+      signing_ts: signatureData.signing_ts,
+      ...(txid ? { support_tx_id: txid } : {}),
     })
       .then((result: CommentCreateResponse) => {
         dispatch({

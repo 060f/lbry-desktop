@@ -10,6 +10,7 @@ const Comments = {
   moderation_block_list: (params: ModerationBlockParams) => fetchCommentsApi('moderation.BlockedList', params),
   comment_list: (params: CommentListParams) => fetchCommentsApi('comment.List', params),
   comment_abandon: (params: CommentAbandonParams) => fetchCommentsApi('comment.Abandon', params),
+  comment_create: (params: CommentCreateParams) => fetchCommentsApi('comment.Create', params),
 };
 
 function fetchCommentsApi(method: string, params: {}) {

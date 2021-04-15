@@ -21,6 +21,7 @@ import { useHistory } from 'react-router';
 import CommentCreate from 'component/commentCreate';
 import CommentMenuList from 'component/commentMenuList';
 import UriIndicator from 'component/uriIndicator';
+import LbcSymbol from 'component/common/lbc-symbol';
 
 type Props = {
   clearPlayingUri: () => void,
@@ -81,6 +82,7 @@ function Comment(props: Props) {
     playingUri,
     stakedLevel,
     livestream,
+    supportAmount,
   } = props;
   const {
     push,
@@ -168,6 +170,7 @@ function Comment(props: Props) {
         'comment--top-level': isTopLevel,
         'comment--reply': !isTopLevel,
         'comment--livestream': livestream,
+        'comment--superchat': supportAmount > 0,
       })}
       id={commentId}
       onMouseOver={() => setMouseHover(true)}
@@ -324,6 +327,12 @@ function Comment(props: Props) {
           </div>
         </div>
       </div>
+
+      {supportAmount > 0 && (
+        <span className="comment__superchat-amount">
+          <LbcSymbol postfix={supportAmount} size={12} />
+        </span>
+      )}
 
       <CommentsReplies threadDepth={threadDepth - 1} uri={uri} parentId={commentId} linkedComment={linkedComment} />
     </li>

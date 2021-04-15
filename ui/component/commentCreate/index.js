@@ -4,6 +4,7 @@ import {
   makeSelectClaimIsMine,
   selectMyChannelClaims,
   selectFetchingMyChannels,
+  doSendTip,
 } from 'lbry-redux';
 import { selectIsPostingComment } from 'redux/selectors/comments';
 import { doOpenModal, doSetActiveChannel } from 'redux/actions/app';
@@ -24,11 +25,12 @@ const select = (state, props) => ({
 });
 
 const perform = (dispatch, ownProps) => ({
-  createComment: (comment, claimId, parentId) =>
-    dispatch(doCommentCreate(comment, claimId, parentId, ownProps.uri, ownProps.livestream)),
+  createComment: (comment, claimId, parentId, txid) =>
+    dispatch(doCommentCreate(comment, claimId, parentId, ownProps.uri, ownProps.livestream, txid)),
   openModal: (modal, props) => dispatch(doOpenModal(modal, props)),
   setActiveChannel: (claimId) => dispatch(doSetActiveChannel(claimId)),
   toast: (message) => dispatch(doToast({ message, isError: true })),
+  sendTip: (params, callback) => dispatch(doSendTip(params, false, callback)),
 });
 
 export default connect(select, perform)(CommentCreate);

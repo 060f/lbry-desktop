@@ -110,6 +110,17 @@ $thumbnailWidthSmall: 1rem;
   opacity: 0.6;
 }
 
+.comment--superchat {
+  background-color: var(--color-primary-alt);
+  box-shadow: 0 0 0 3px var(--color-primary-alt);
+  padding: 0 5px;
+  border-radius: var(--border-radius);
+  margin .comment__superchat-amount {
+    margin-top: var(--spacing-xs);
+    font-size: var(--font-xsmall);
+  }
+}
+
 .comment__threadline {
   @extend .button--alt;
   height: auto;

@@ -123,6 +123,7 @@ export default function LivestreamComments(props: Props) {
                       commentId={comment.comment_id}
                       message={comment.comment}
                       timePosted={comment.timestamp * 1000}
+                      supportAmount={comment.support_amount}
                     />
                   </div>
                 ))}
