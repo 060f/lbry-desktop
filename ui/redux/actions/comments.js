@@ -238,6 +238,7 @@ export function doCommentCreate(
       comment: comment,
       claim_id: claim_id,
       channel_id: activeChannelClaim.claim_id,
+      channel_name: activeChannelClaim.name,
       parent_id: parent_id,
       signature: signatureData.signature,
       signing_ts: signatureData.signing_ts,

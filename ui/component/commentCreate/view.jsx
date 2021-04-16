@@ -117,6 +117,7 @@ export function CommentCreate(props: Props) {
     const params = {
       amount: tipAmount,
       claim_id: claimId,
+      channel_id: activeChannelClaim.claim_id,
     };
     sendTip(params, (response) => {
       const { txid } = response;
@@ -228,7 +229,7 @@ export function CommentCreate(props: Props) {
               type="button"
               button="primary"
               icon={ICONS.LBC}
-              label={__('Send Moonchat')}
+              label={__('Review')}
               onClick={() => setIsReviewingSupportComment(true)}
             />
             <Button disabled={disabled} button="link" label={__('Cancel')} onClick={() => setIsSupportComment(false)} />
