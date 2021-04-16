@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Japanese, Afrikaans, Filipino, Thai and Vietnamese language support ([#5684](https://github.com/lbryio/lbry-desktop/issues/5684))
 - Highlight comments made by content owner _community pr!_ ([#5744](https://github.com/lbryio/lbry-desktop/pull/5744))
+- Re-added ability to export wallet transactions ([#5899](https://github.com/lbryio/lbry-desktop/pull/5899))
 
 ### Changed
 
