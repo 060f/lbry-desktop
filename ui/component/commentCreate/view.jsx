@@ -13,6 +13,7 @@ import { FF_MAX_CHARS_IN_COMMENT } from 'constants/form-field';
 import { useHistory } from 'react-router';
 import WalletTipAmountSelector from 'component/walletTipAmountSelector';
 import LbcSymbol from 'component/common/lbc-symbol';
+import CreditAmount from 'component/common/credit-amount';
 
 const COMMENT_SLOW_MODE_SECONDS = 5;
 
@@ -61,6 +62,7 @@ export function CommentCreate(props: Props) {
   const { claim_id: claimId } = claim;
   const [isSupportComment, setIsSupportComment] = React.useState();
   const [isReviewingSupportComment, setIsReviewingSupportComment] = React.useState();
+  const [tipAmount, setTipAmount] = React.useState(1);
   const [commentValue, setCommentValue] = React.useState('');
   const [lastCommentTime, setLastCommentTime] = React.useState();
   const [advancedEditor, setAdvancedEditor] = usePersistedState('comment-editor-mode', false);
@@ -113,7 +115,7 @@ export function CommentCreate(props: Props) {
 
   function handleSupportComment() {
     const params = {
-      amount: 5,
+      amount: tipAmount,
       claim_id: claimId,
     };
     sendTip(params, (response) => {
@@ -169,25 +171,18 @@ export function CommentCreate(props: Props) {
 
   if (isReviewingSupportComment) {
     return (
-      <>
-        <div className="section section--padded card--inline confirm__wrapper">
-          <div className="section">
-            <div className="confirm__label">{__('To --[the tip recipient]--')}</div>
-            <div className="confirm__value">{claimChannel}</div>
-            <div className="confirm__label">{__('From --[the tip sender]--')}</div>
-            <div className="confirm__value">{activeChannelClaim.name}</div>
-            <div className="confirm__label">{__('Moonchat')}</div>
-            <div className="confirm__value">
-              <LbcSymbol postfix={5} size={22} />
-            </div>
-            <div className="confirm__value">{commentValue}</div>
-          </div>
+      <div className="comment__create">
+        <div className="comment--superchat-preview">
+          <div>{activeChannelClaim.name}</div>
+          <div>{commentValue}</div>
+
+          <CreditAmount amount={tipAmount} size={12} />
         </div>
         <div className="section__actions">
           <Button autoFocus button="primary" label={__('Confirm')} onClick={handleSupportComment} />
           <Button button="link" label={__('Cancel')} onClick={() => setIsReviewingSupportComment(false)} />
         </div>
-      </>
+      </div>
     );
   }
 
@@ -205,7 +200,9 @@ export function CommentCreate(props: Props) {
         name={isReply ? 'content_reply' : 'content_description'}
         label={
           <span className="comment-new__label-wrapper">
-            <div className="comment-new__label">{isReply ? __('Replying as') + ' ' : __('Comment as') + ' '}</div>
+            {!livestream && (
+              <div className="comment-new__label">{isReply ? __('Replying as') + ' ' : __('Comment as') + ' '}</div>
+            )}
             <SelectChannel tiny />
           </span>
         }
@@ -222,11 +219,7 @@ export function CommentCreate(props: Props) {
         autoFocus={isReply}
         textAreaMaxLength={FF_MAX_CHARS_IN_COMMENT}
       />
-      {isSupportComment && (
-        <div>
-          <WalletTipAmountSelector />
-        </div>
-      )}
+      {isSupportComment && <WalletTipAmountSelector amount={tipAmount} onChange={(amount) => setTipAmount(amount)} />}
       <div className="section__actions section__actions--no-margin">
         {isSupportComment ? (
           <>
@@ -253,8 +246,8 @@ export function CommentCreate(props: Props) {
                     ? __('Replying...')
                     : __('Reply')
                   : isPostingComment
-                  ? __('Posting...')
-                  : __('Post --[button to submit something]--')
+                  ? __('Commenting...')
+                  : __('Comment --[button to submit something]--')
               }
               requiresAuth={IS_WEB}
             />

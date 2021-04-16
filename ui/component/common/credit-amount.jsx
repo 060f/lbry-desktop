@@ -39,6 +39,7 @@ class CreditAmount extends React.PureComponent<Props> {
       showLBC,
       className,
       noFormat,
+      size,
     } = this.props;
 
     const minimumRenderableAmount = 10 ** (-1 * precision);
@@ -66,7 +67,7 @@ class CreditAmount extends React.PureComponent<Props> {
       }
 
       if (showLBC) {
-        amountText = <LbcSymbol postfix={amountText} />;
+        amountText = <LbcSymbol postfix={amountText} size={size} />;
       }
 
       if (fee) {
