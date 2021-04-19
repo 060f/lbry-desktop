@@ -60,6 +60,52 @@ export function doCommentList(uri: string, page: number = 1, pageSize: number = 
   };
 }
 
+export function doSuperChatList(uri: string) {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const state = getState();
+    const claim = selectClaimsByUri(state)[uri];
+    const claimId = claim ? claim.claim_id : null;
+
+    if (!claimId) {
+      dispatch({
+        type: ACTIONS.COMMENT_LIST_FAILED,
+        data: 'unable to find claim for uri',
+      });
+
+      return;
+    }
+
+    dispatch({
+      type: ACTIONS.COMMENT_LIST_STARTED,
+    });
+
+    return Comments.super_list({
+      claim_id: claimId,
+    })
+      .then((result: CommentListResponse) => {
+        console.log('result', result);
+        // const { items: comments } = result;
+        // dispatch({
+        //   type: ACTIONS.COMMENT_LIST_COMPLETED,
+        //   data: {
+        //     comments,
+        //     claimId: claimId,
+        //     uri: uri,
+        //   },
+        // });
+        // return result;
+      })
+      .catch((error) => {
+        console.log('error', error);
+        // debugger;
+        // dispatch({
+        //   type: ACTIONS.COMMENT_LIST_FAILED,
+        //   data: error,
+        // });
+      });
+  };
+}
+
 export function doCommentReactList(uri: string | null, commentId?: string) {
   return (dispatch: Dispatch, getState: GetState) => {
     const state = getState();

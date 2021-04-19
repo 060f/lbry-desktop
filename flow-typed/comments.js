@@ -22,4 +22,6 @@ declare type CommentCreateParams = {
   support_tx_id?: string,
 };
 
+declare type SuperListParams = {};
+
 declare type ModerationBlockParams = {};

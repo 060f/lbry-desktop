@@ -28,6 +28,7 @@ export default function LivestreamComments(props: Props) {
     comments,
     doCommentList,
     fetchingComments,
+    doSuperChatList,
   } = props;
   const commentsRef = React.createRef();
   const hasScrolledComments = React.useRef();
@@ -38,6 +39,7 @@ export default function LivestreamComments(props: Props) {
   React.useEffect(() => {
     if (claimId) {
       doCommentList(uri);
+      doSuperChatList(uri);
       doCommentSocketConnect(uri, claimId);
     }
 
@@ -46,7 +48,7 @@ export default function LivestreamComments(props: Props) {
         doCommentSocketDisconnect(claimId);
       }
     };
-  }, [claimId, uri, doCommentList, doCommentSocketConnect, doCommentSocketDisconnect]);
+  }, [claimId, uri, doCommentList, doSuperChatList, doCommentSocketConnect, doCommentSocketDisconnect]);
 
   React.useEffect(() => {
     const element = commentsRef.current;

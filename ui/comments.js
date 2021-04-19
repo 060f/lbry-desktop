@@ -11,6 +11,7 @@ const Comments = {
   comment_list: (params: CommentListParams) => fetchCommentsApi('comment.List', params),
   comment_abandon: (params: CommentAbandonParams) => fetchCommentsApi('comment.Abandon', params),
   comment_create: (params: CommentCreateParams) => fetchCommentsApi('comment.Create', params),
+  super_list: (params: SuperListParams) => fetchCommentsApi('comment.SuperChatList', params),
 };
 
 function fetchCommentsApi(method: string, params: {}) {
